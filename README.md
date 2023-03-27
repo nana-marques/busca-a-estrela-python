@@ -1,5 +1,5 @@
-### busca-a-estrela-python
-##Trabalho de Inteligência Artificial de busca com algoritmo A*. 
+# Busca-a-estrela-python
+## Trabalho de Inteligência Artificial de busca com algoritmo A*. 
 
 
 Guia:
