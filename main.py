@@ -1,4 +1,3 @@
-import random
 import pygame
 import math
 from queue import PriorityQueue
@@ -24,7 +23,7 @@ class Spot:
 		self.col = col
 		self.x = row * width
 		self.y = col * width
-		self.color = ORANGE
+		self.color = WHITE
 		self.neighbors = []
 		self.width = width
 		self.total_rows = total_rows
@@ -189,14 +188,8 @@ def get_clicked_pos(pos, rows, width):
 	return row, col
 
 
-def on_grid_random():
-    x = random.randint(0,590)
-    y = random.randint(0,590)
-    return (x//10 * 10, y//10 * 10)
-
-
 def main(win, width):
-	ROWS = 42
+	ROWS = 50
 	grid = make_grid(ROWS, width)
 
 	start = None
@@ -209,17 +202,16 @@ def main(win, width):
 			if event.type == pygame.QUIT:
 				run = False
 
-			if pygame.init() or pygame.mouse.get_pressed()[0]:
-			#if pygame.mouse.get_pressed()[0]: # LEFT
+			if pygame.mouse.get_pressed()[0]: # LEFT
 				pos = pygame.mouse.get_pos()
 				row, col = get_clicked_pos(pos, ROWS, width)
-				spot = grid[20][20]
+				spot = grid[row][col]
 				if not start and spot != end:
 					start = spot
 					start.make_start()
 
 				elif not end and spot != start:
-					end = on_grid_random()
+					end = spot
 					end.make_end()
 
 				elif spot != end and spot != start:
