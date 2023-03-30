@@ -16,8 +16,11 @@ azul = [(85, 139, 213), 10]
 marrom = [(148, 139, 82), 60]
 vermelho = [(255, 0, 0), 1]
 amarelo = (217, 217, 25)
+laranja = (255, 165 ,0)
 cores = [verde[0], azul[0], marrom[0]]
 tela = pygame.display.set_mode((largura, altura))
+pygame.display.set_caption('Algoritmo A*')
+
 
 def draw():
     for x in range(0, largura, 15):
@@ -25,9 +28,12 @@ def draw():
             pos_x = x
             pos_y = y
             cor = cores[randint(0, 2)]
-    pygame.display.set_caption('Jogo')
+    return x, y
 
-def update_neighbors(self, grid):
+def get_pos(self):
+    return self.row, self.col
+
+def caminho_update(self, grid):
         self.neighbors = []
         if self.row < self.total_rows - 1 and not grid[self.row + 1][self.col].is_barrier(): # DOWN
             self.neighbors.append(grid[self.row + 1][self.col])
@@ -64,7 +70,7 @@ def mapa():
     pygame.draw.rect(tela, (255, 0, 0), (315, 315, 15, 15))
 
 # Busca heuristica
-def h(p1, p2):
+def heuristica(p1, p2):
     x1, y1 = p1
     x2, y2 = p2
     return abs(x1 - x2) + abs(y1 - y2)
@@ -84,7 +90,7 @@ def algorithm(mapa, start, end, cor):
     g_score = {spot: float("inf") for row in mapa for spot in row}
     g_score[start] = 0
     f_score = {spot: float("inf") for row in mapa for spot in row}
-    f_score[start] = h(start.get_pos(), end.get_pos())
+    f_score[start] = heuristica(start.get_pos(), end.get_pos())
 
     open_set_hash = {start}
 
@@ -117,22 +123,51 @@ def algorithm(mapa, start, end, cor):
         draw()
 
         if current != start:
-            current.make_closed()
+            current = pygame.Color(vermelho[0])
 
     return False
 
-mapa()
-while True:
-    for evento in pygame.event.get():
-        if evento.type == QUIT:
-            pygame.quit()
-            exit()
-    
-    
-    for i in range(0, largura, 15):
-        cor_vermelho = vermelho[0]
-        valor_vermelho = vermelho[1]
 
-        pygame.draw.rect(tela, cor_vermelho, (270, 270, 105, 105), 2)
+def main():
 
-    pygame.display.update()
+    mapa()
+    while True:
+        ponto = None
+        esferas = [ponto]
+
+        for evento in pygame.event.get():
+            if evento.type == QUIT:
+                pygame.quit()
+                exit()
+
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                # posicao_esfera = pygame.mouse.get_pressed()
+                pos_x, pos_y = evento.pos
+
+                for x in range(0, largura):
+                    for y in range(0, altura):
+                        x = pos_x
+                        y = pos_y
+                
+                cor_esfera = pygame.Color(laranja)
+                pygame.draw.rect(tela, cor_esfera, ((15 * round(x/15)), (15 * round(y/15)), 15, 15))
+                # pygame.draw.circle(tela, cor_esfera, (x, y), 7.5)
+                print(x,y)
+
+            if evento.type == pygame.K_SPACE and esferas:
+                for x in range(0, largura, 15):
+                    for y in range(0, altura, 15):
+                        pos_x = x
+                        pos_y = y
+                        y = caminho_update(pos_x, pos_y)
+        
+        
+        # tamanho do radar
+        for i in range(0, largura, 15):
+            cor_vermelho = vermelho[0]
+            valor_vermelho = vermelho[1]
+            pygame.draw.rect(tela, cor_vermelho, (270, 270, 105, 105), 2)
+
+        pygame.display.update()
+
+main()
