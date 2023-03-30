@@ -16,7 +16,7 @@ azul = [(85, 139, 213), 10]
 marrom = [(148, 139, 82), 60]
 vermelho = [(255, 0, 0), 1]
 amarelo = (217, 217, 25)
-laranja = (255, 165 ,0)
+laranja = (255, 173 ,0)
 cores = [verde[0], azul[0], marrom[0]]
 tela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption('Algoritmo A*')
@@ -129,11 +129,8 @@ def algorithm(mapa, start, end, cor):
 
 
 def main():
-
     mapa()
     while True:
-        ponto = None
-        esferas = [ponto]
 
         for evento in pygame.event.get():
             if evento.type == QUIT:
@@ -145,21 +142,26 @@ def main():
                 pos_x, pos_y = evento.pos
 
                 for x in range(0, largura):
+                    esferas = []
                     for y in range(0, altura):
                         x = pos_x
                         y = pos_y
-                
+
                 cor_esfera = pygame.Color(laranja)
-                pygame.draw.rect(tela, cor_esfera, ((15 * round(x/15)), (15 * round(y/15)), 15, 15))
-                # pygame.draw.circle(tela, cor_esfera, (x, y), 7.5)
-                print(x,y)
+                pygame.draw.rect(tela, cor_esfera, ((15 * round(x/15)), (15 * round(y/15)), 15, 15), 0, 10, 10, 10, 10)
+                if len(esferas) < 7:
+                    esferas.append((x, y))
+                    print(esferas)
+
+
+                #print(x,y)
 
             if evento.type == pygame.K_SPACE and esferas:
                 for x in range(0, largura, 15):
                     for y in range(0, altura, 15):
                         pos_x = x
                         pos_y = y
-                        y = caminho_update(pos_x, pos_y)
+                        y = caminho_update(((15 * round(x/15)), (15 * round(y/15))))
         
         
         # tamanho do radar
