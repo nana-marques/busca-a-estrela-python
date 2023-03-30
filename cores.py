@@ -130,6 +130,7 @@ def algorithm(mapa, start, end, cor):
 
 def main():
     mapa()
+    esferas = []
     while True:
 
         for evento in pygame.event.get():
@@ -142,14 +143,13 @@ def main():
                 pos_x, pos_y = evento.pos
 
                 for x in range(0, largura):
-                    esferas = []
                     for y in range(0, altura):
                         x = pos_x
                         y = pos_y
 
                 cor_esfera = pygame.Color(laranja)
-                pygame.draw.rect(tela, cor_esfera, ((15 * round(x/15)), (15 * round(y/15)), 15, 15), 0, 10, 10, 10, 10)
                 if len(esferas) < 7:
+                    pygame.draw.rect(tela, cor_esfera, ((15 * round(x/15)), (15 * round(y/15)), 15, 15), 0, 10, 10, 10, 10)
                     esferas.append((x, y))
                     print(esferas)
 
