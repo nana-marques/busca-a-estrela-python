@@ -19,6 +19,7 @@ amarelo = (217, 217, 25)
 laranja = (255, 173 ,0)
 cores = [verde[0], azul[0], marrom[0]]
 tela = pygame.display.set_mode((largura, altura))
+tela2 = [(630, 630)]
 pygame.display.set_caption('Algoritmo A*')
 
 
@@ -37,24 +38,24 @@ class Ponto:
         self.valor = valor
 
     def get_pos(self):
-        return self.row, self.col
+        return self.x, self.y
 
     def caminho_update(self, grid):
             neighbors = []
             neighbors.extend(self)
 
-            print(self)
-            if self[0] < largura and not grid[self[0] + (self.valor)]: # DOWN
-                self.neighbors.append(grid[self.row + 1][self.col])
+            if self[0] < largura and not grid[1]: # DOWN
+                # print(grid)
+                neighbors.append(grid[(self[0])][(self[1])])
 
-            if self[0] > 0 and not grid[self.row - 1][self.col]: # UP
-                self.neighbors.append(grid[self.row - 1][self.col])
+            if self[0] > 0 and not grid[1]: # UP
+                neighbors.append(grid[self[0] - 1][self[1]])
 
-            if self[1] < largura - 1 and not grid[self.row][self.col + 1]: # RIGHT
-                self.neighbors.append(grid[self.row][self.col + 1])
+            if self[1] < largura - 1 and not grid[0]: # RIGHT
+                neighbors.append(grid[self[0]][self[1] + 1])
 
-            if self[1] > 0 and not grid[self.row][self.col - 1]: # LEFT
-                self.neighbors.append(grid[self.row][self.col - 1])
+            if self[1] > 0 and not grid[0]: # LEFT
+                neighbors.append(grid[self[0]][self[1] - 1])
 
 
 # Cria os quadrados coloridos
@@ -68,25 +69,33 @@ def mapa():
             pos_y = y
             cor = cores[randint(0, 2)]
 
-            # for ponto in cor:
-            #     if cor == 0:
-            #         valor = 1
-            #         ponto.extend(valor)
-            #     if cor == 1:
-            #         valor = 10
-            #         ponto.extend(valor)
-            #     if cor == 2:
-            #         valor = 60
-            #         ponto.extend(cor, valor)
+            ponto = pygame.draw.rect(tela, cor, (pos_x, pos_y, 15, 15))
 
-            pygame.draw.rect(tela, cor, (pos_x, pos_y, 15, 15))
+            if ponto == 0:
+                value = 1
+                ponto.append(value)
+                return ponto
+            elif ponto == 1:
+                value = 10
+                ponto.append(value)
+                return ponto
+            elif ponto == 2:
+                value = 60
+                ponto.append(value)
+                return ponto
+
+            print(ponto)
+
+    
             
     pygame.draw.rect(tela, vermelho[0], (315, 315, 15, 15))
 
+    return posicoes
+
 # Busca heuristica
 def heuristica(p1, p2):
-    x1, y1 = p1
-    x2, y2 = p2
+    (x1, y1) = p1
+    (x2, y2) = p2
     return abs(x1 - x2) + abs(y1 - y2)
 
 # Refazer caminho
@@ -95,17 +104,18 @@ def reconstruct_path(came_from, current):
         current = came_from[current]
         current = pygame.Color(amarelo)
 
+
 # Algoritmo a*
 def algorithm(mapa, start, end, cor):
     count = 0
     open_set = PriorityQueue()
     open_set.put((0, count, start))
     came_from = {}
-    g_score = {spot: float("inf") for row in mapa for spot in row}
+    g_score = {spot: float("inf") for pos_x in mapa for spot in pos_x}
     g_score[start] = 0
-    f_score = {spot: float("inf") for row in mapa for spot in row}
-    f_score[start] = heuristica(start.get_pos(), end.get_pos())
-
+    f_score = {spot: float("inf") for pos_x in mapa for spot in pos_x}
+    f_score[start] = heuristica((start[0], start[1]), (end[0], end[1]))
+    print(f_score[start])
     open_set_hash = {start}
 
     while not open_set.empty():
@@ -118,21 +128,22 @@ def algorithm(mapa, start, end, cor):
 
         if current == end:
             reconstruct_path(came_from, end, draw)
-            end.make_end()
+            end = pygame.Color(0,0,0)
             return True
 
-        for neighbor in current.neighbors:
+        for neighbor in current:
             temp_g_score = g_score[current] + 1
+            
 
             if temp_g_score < g_score[neighbor]:
                 came_from[neighbor] = current
                 g_score[neighbor] = temp_g_score
-                f_score[neighbor] = temp_g_score + h(neighbor.get_pos(), end.get_pos())
+                f_score[neighbor] = temp_g_score + heuristica(neighbor.get_pos(), end.get_pos())
                 if neighbor not in open_set_hash:
                     count += 1
                     open_set.put((f_score[neighbor], count, neighbor))
                     open_set_hash.add(neighbor)
-                    neighbor.make_open()
+                    neighbor = pygame.Color((0, 255, 0))
 
         draw()
 
@@ -143,6 +154,7 @@ def algorithm(mapa, start, end, cor):
 
 
 def main():
+
     mapa()
     esferas = []
     while True:
@@ -176,16 +188,16 @@ def main():
                         pos_x = x
                         pos_y = y
                         final = esferas[0]
-
-                        final = Ponto.caminho_update(esferas[1], (x, y))
+                        Ponto.caminho_update(esferas[1], final)
 
             if evento.type == pygame.KEYDOWN and final:
                 inicio = (315, 315, 15, 15)
                 grid = draw()
+                # print(grid)
+                tamanho = (630, 630)
 
-                algorithm(lambda: mapa(tela, grid, 630, 630), grid, inicio, final)
-
-
+                # print(tela)
+                algorithm(lambda: tamanho, grid, inicio, final)
         
         
         # tamanho do radar
