@@ -30,27 +30,37 @@ def draw():
             cor = cores[randint(0, 2)]
     return x, y
 
-def get_pos(self):
-    return self.row, self.col
+class Ponto:
+    def __init__(self, cor, valor):
+        self.grid = self
+        self.cor = cor
+        self.valor = valor
 
-def caminho_update(self, grid):
-        self.neighbors = []
-        if self.row < self.total_rows - 1 and not grid[self.row + 1][self.col].is_barrier(): # DOWN
-            self.neighbors.append(grid[self.row + 1][self.col])
+    def get_pos(self):
+        return self.row, self.col
 
-        if self.row > 0 and not grid[self.row - 1][self.col].is_barrier(): # UP
-            self.neighbors.append(grid[self.row - 1][self.col])
+    def caminho_update(self, grid):
+            neighbors = []
+            neighbors.extend(self)
 
-        if self.col < self.total_rows - 1 and not grid[self.row][self.col + 1].is_barrier(): # RIGHT
-            self.neighbors.append(grid[self.row][self.col + 1])
+            print(self)
+            if self[0] < largura and not grid[self[0] + (self.valor)]: # DOWN
+                self.neighbors.append(grid[self.row + 1][self.col])
 
-        if self.col > 0 and not grid[self.row][self.col - 1].is_barrier(): # LEFT
-            self.neighbors.append(grid[self.row][self.col - 1])
+            if self[0] > 0 and not grid[self.row - 1][self.col]: # UP
+                self.neighbors.append(grid[self.row - 1][self.col])
+
+            if self[1] < largura - 1 and not grid[self.row][self.col + 1]: # RIGHT
+                self.neighbors.append(grid[self.row][self.col + 1])
+
+            if self[1] > 0 and not grid[self.row][self.col - 1]: # LEFT
+                self.neighbors.append(grid[self.row][self.col - 1])
 
 
 # Cria os quadrados coloridos
 def mapa():
     posicoes = []
+
     for x in range(0, largura, 15):
         for y in range(0, altura, 15):
             posicoes.append((x, y))
@@ -58,16 +68,20 @@ def mapa():
             pos_y = y
             cor = cores[randint(0, 2)]
 
-            if cor == 0:
-                valor = 1
-            if cor == 1:
-                valor = 10
-            if cor == 2:
-                valor = 60
-            
+            # for ponto in cor:
+            #     if cor == 0:
+            #         valor = 1
+            #         ponto.extend(valor)
+            #     if cor == 1:
+            #         valor = 10
+            #         ponto.extend(valor)
+            #     if cor == 2:
+            #         valor = 60
+            #         ponto.extend(cor, valor)
+
             pygame.draw.rect(tela, cor, (pos_x, pos_y, 15, 15))
             
-    pygame.draw.rect(tela, (255, 0, 0), (315, 315, 15, 15))
+    pygame.draw.rect(tela, vermelho[0], (315, 315, 15, 15))
 
 # Busca heuristica
 def heuristica(p1, p2):
@@ -156,18 +170,27 @@ def main():
 
                 #print(x,y)
 
-            if evento.type == pygame.K_SPACE and esferas:
+            if evento.type == pygame.KEYDOWN and esferas:
                 for x in range(0, largura, 15):
                     for y in range(0, altura, 15):
                         pos_x = x
                         pos_y = y
-                        y = caminho_update(((15 * round(x/15)), (15 * round(y/15))))
+                        final = esferas[0]
+
+                        final = Ponto.caminho_update(esferas[1], (x, y))
+
+            if evento.type == pygame.KEYDOWN and final:
+                inicio = (315, 315, 15, 15)
+                grid = draw()
+
+                algorithm(lambda: mapa(tela, grid, 630, 630), grid, inicio, final)
+
+
         
         
         # tamanho do radar
         for i in range(0, largura, 15):
             cor_vermelho = vermelho[0]
-            valor_vermelho = vermelho[1]
             pygame.draw.rect(tela, cor_vermelho, (270, 270, 105, 105), 2)
 
         pygame.display.update()
